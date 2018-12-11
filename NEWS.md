@@ -1,3 +1,38 @@
+
+=================================================================================
+
+#### fieldRS 0.2.1
+
+=================================================================================
+
+### New
+  * extractFields() offers multiple drawing options and includes smoothing
+  * ecDistance now accepts matrices and data.frames
+  * labelCheck() corrects labels automatically given a reference vector
+  * poly2sample() preserves the unique identifiers of each polygon
+  * ccLabel() allows positive/negative thresholds (informs if the output 
+    should be higher or lower than the specified value)
+    
+### Changes
+  * "class_count" replaced by "richness" in "priority" argument within rankPlots()
+  * "diversity" added to "priority" argument within rankPlots()
+
+=================================================================================
+
+#### fieldRS 0.1.2
+
+=================================================================================
+
+### New
+  * Added functions simpleTrace() and smoothTrace()
+  
+### Fixes
+  * Update vignette
+  * labelCheck() now returns correct sample frequencies
+
+### Changes
+  * extractFields() provides multiple methods to draw polygons
+
 =================================================================================
 
 #### fieldRS 0.1.1

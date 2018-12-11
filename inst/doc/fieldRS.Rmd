@@ -90,7 +90,9 @@ plot(k.img)
 Now that we collected all the reference data, we can use `rankPlots()` to identify priority sampling sites using the following criteria:
 </p>
 
-* `class_count` - Priority given to the highest class count.
+* `diversity` - Priority given to the highest class heterogeneity.
+
+* `richness` - Priority given to the highest number of classes.
 
 * `pixel_frequency` - Priority given to the higuest non-NA pixel count.
 
@@ -105,12 +107,12 @@ While the function offers a set of predefined sorting criteria, the user can re-
 ``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
 # example 1
 plot.grid_1 <- plot.grid
-plot.grid_1@data <- rankPlots(k.img, plot.grid, roads, priority=c('class_count', 'patch_count', 'road_distance'))
+plot.grid_1@data <- rankPlots(k.img, plot.grid, roads, priority=c('diversity', 'richness', 'patch_count', 'road_distance'))
 kable_styling(kable(head(plot.grid_1@data, 5), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
 
-# example
+# example 2
 plot.grid_2 <- plot.grid
-plot.grid_2@data <- rankPlots(k.img, plot.grid, roads, priority=c('road_distance', 'class_count', 'patch_count'))
+plot.grid_2@data <- rankPlots(k.img, plot.grid, roads, priority=c('road_distance', 'patch_count'))
 kable_styling(kable(head(plot.grid_2@data, 5), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
 ```
 
@@ -143,14 +145,14 @@ plot(seg.img)
 ```
 
 <p align="justify" style="line-height:200%;">
-Now we can `erosionFilter()` to remove small clumps that are likely related to mixed-pixels.
+Now we can `pixFilter()` to apply a erosion filter that removes small clumps likely related to mixed-pixels.
 </p>
 
 ```{r message=FALSE, eval=FALSE}
-seg.img <- erosionFilter(seg.img)
+seg.img <- pixFilter(seg.img, 1, "erosion")
 ```
 
-``` {r echo=FALSE}
+``` {r message=FALSE, echo=FALSE}
 seg.img <- raster(system.file("extdata", "segFilter.tif", package="fieldRS"))
 ```
 
@@ -160,6 +162,19 @@ Finally, we will use `extractFields()` to derive polygons for each segment. This
 
 ``` {r message=FALSE}
 fields <- extractFields(seg.img)
+```
+
+``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
+plot(seg.img)
+plot(fields, border="red", add=TRUE)
+```
+
+<p align="justify" style="line-height:200%;">
+The default approach used by `extractFields()` to draw polygons is the convex hull method, implemented in the `chull()` function. This is named as the "simple" method in this function. Additionally, the function offers a "complex" approach that applies the concave hull method, implemented in the `concaveman()` function of the package with the same name. As shown below, the concave hull approach is a bit more precise. However, it is also more time consuming.
+</p>
+
+``` {r message=FALSE}
+fields <- extractFields(seg.img, method="complex")
 ```
 
 ``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
@@ -188,7 +203,7 @@ plot(unique.crop$label.count.plot) # show label frequency plot
 The output shows us three classes: "bare land", "cotton" and "wheat". Additionally, we can see that there are no misspellings. Now, for the purpose of this example, let's assume we only wish to classify wheat. For this reason, let's set all the other samples (i.e. "bare land" and "cotton") to "not-wheat". `labelCheck()` will do this for us. But we need to provide a vector with the corrected unique labels that will be compared against the unique labels reported by the function. This way, the slot `labels` will provide the corrected labels instead of the unique values. We can assign this output to the `fieldData`. Additionally, it will offer us a statistical account of the samples as done before based on the new classes.
 </p>
 
-``` {r, out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE}
+``` {r}
 corrected.labels <- labelCheck(fieldData$crop, unique.crop$labels, c("wheat", "not-wheat", "not-wheat"))
 fieldData$crop_2 <- corrected.labels$labels
 ```

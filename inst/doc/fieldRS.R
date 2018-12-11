@@ -33,12 +33,12 @@ plot(k.img)
 ## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
 # example 1
 plot.grid_1 <- plot.grid
-plot.grid_1@data <- rankPlots(k.img, plot.grid, roads, priority=c('class_count', 'patch_count', 'road_distance'))
+plot.grid_1@data <- rankPlots(k.img, plot.grid, roads, priority=c('diversity', 'richness', 'patch_count', 'road_distance'))
 kable_styling(kable(head(plot.grid_1@data, 5), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
 
-# example
+# example 2
 plot.grid_2 <- plot.grid
-plot.grid_2@data <- rankPlots(k.img, plot.grid, roads, priority=c('road_distance', 'class_count', 'patch_count'))
+plot.grid_2@data <- rankPlots(k.img, plot.grid, roads, priority=c('road_distance', 'patch_count'))
 kable_styling(kable(head(plot.grid_2@data, 5), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive")
 
 ## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
@@ -56,13 +56,20 @@ seg.img <- ccLabel(ndvi.max, method="spatial", change.threshold=5)$regions # seg
 plot(seg.img)
 
 ## ----message=FALSE, eval=FALSE-------------------------------------------
-#  seg.img <- erosionFilter(seg.img)
+#  seg.img <- pixFilter(seg.img, 1, "erosion")
 
-## ----echo=FALSE----------------------------------------------------------
+## ----message=FALSE, echo=FALSE-------------------------------------------
 seg.img <- raster(system.file("extdata", "segFilter.tif", package="fieldRS"))
 
 ## ----message=FALSE-------------------------------------------------------
 fields <- extractFields(seg.img)
+
+## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
+plot(seg.img)
+plot(fields, border="red", add=TRUE)
+
+## ----message=FALSE-------------------------------------------------------
+fields <- extractFields(seg.img, method="complex")
 
 ## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
 plot(seg.img)
@@ -76,7 +83,7 @@ unique.crop$labels # show unique labels
 kable_styling(kable(head(unique.crop$label.count, 3), format="html", align="c", full_width=TRUE), "stripped", bootstrap_options="responsive") # label frequency
 plot(unique.crop$label.count.plot) # show label frequency plot
 
-## ---- out.width="98%", fig.height=5, fig.width=10, dpi=600, fig.align="center", fig.show='hold', echo=FALSE----
+## ------------------------------------------------------------------------
 corrected.labels <- labelCheck(fieldData$crop, unique.crop$labels, c("wheat", "not-wheat", "not-wheat"))
 fieldData$crop_2 <- corrected.labels$labels
 

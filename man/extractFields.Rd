@@ -4,10 +4,14 @@
 \alias{extractFields}
 \title{extractFields}
 \usage{
-extractFields(x)
+extractFields(x, method = "simple", smooth.x = FALSE)
 }
 \arguments{
 \item{x}{Object of class \emph{RasterLayer}.}
+
+\item{method}{One of "simple" or "complex".}
+
+\item{smooth.x}{A logical argument.}
 }
 \value{
 A \emph{SpatialPolygonsDataFrame}.
@@ -16,16 +20,22 @@ A \emph{SpatialPolygonsDataFrame}.
 Extracts and vectorizes clumps of pixels with equal value within a raster object.
 }
 \details{
-{Given a segmented image as \emph{x}, the function extracts patches of pixels with equal value. For each 
-pixel region, the function extracts the center pixel coordinates and derives their minimum convex polygon. Then, 
-for each polygon, the derives a ratio between the area of the polygon and the area of the pixel region. Ratios 
-below zero suggest that the region has a clearly defined shape (e.g. rectangular). Clumps is less than 3 points 
-are ignored. The output of the function is a \emph{SpatialPolygonsDataFrame} reporting on:
+{Assuming \emph{x} is a classified or segmented image, this function segments it using 
+\link{ccLabel} and, draws polygons for each group of connected pixels. The way polygons are drawn 
+depends on the \emph{method} keyword. The function will accept one of the following options:
 \itemize{
- \item{\emph{Region ID} - Unique polygon identifier.}
- \item{\emph{Area} - Polygon Area (in square meters).}
- \item{\emph{Perimeter} - Polygon perimeter (in square meters).}
- \item{\emph{Pixel \%} - Percentage of non-NA pixels.}}}
+  \item{\emph{simple} - Extracts the center pixel coordinates and builds a polygon based on their minimum convex hull.}
+  \item{\emph{complex} - Extracts the center pixel coordinates and builds a polygon based on their minimum concave hull.}}
+  The "simple" approach is a faster but it can lead to poor results when dealing with very complex shapes. For example, crop 
+  fields can be rectangular in which case the "simple" method is sufficient. On the other hand, forest belts can have irregular 
+  shapes, in which case the "complex" method is more appropriate. By default, the function will use all pixels associated to a 
+  region. However, if \emph{smooth.x} is set to TRUE, for each region, the function will remove samples with less than 5 neighbors 
+  efectively removing isolated pixels along the edge of a region. The final output is a \emph{SpatialPolygonsDataFrame} reporting on:
+\itemize{
+ \item{\emph{region.id} - Unique polygon identifier corresponding to the original pixel region.}
+ \item{\emph{area} - Polygon Area (in square meters).}
+ \item{\emph{perimeter} - Polygon perimeter (in meters).}
+ \item{\emph{cover.ratio} - Ration between the polygon area and the area of the corresponding pixels.}}}
 }
 \examples{
 {
@@ -36,11 +46,19 @@ require(raster)
 r <- brick(system.file("extdata", "ndvi.tif", package="fieldRS"))
 
 # spatial change labeling
-or <- ccLabel(r[[1]], method="spatial", change.threshold=10)$regions
+or <- ccLabel(r, method="temporal", change.threshold=50)$regions
 
-# convert to polygons and plot
-ef <- extractFields(or)
+# convert to polygons and plot (simple)
+ef <- extractFields(or[1:50,1:50, drop=FALSE])
 plot(ef)
+
+# convert to polygons and plot (complex)
+ef <- extractFields(or[1:50,1:50, drop=FALSE], method="complex")
+plot(ef, border="red", add=TRUE)
+
+# convert to polygons and plot (complex and smoothed)
+ef <- extractFields(or[1:50,1:50, drop=FALSE], method="complex", smooth.x=TRUE)
+plot(ef, border="blue", add=TRUE)
 
 }
 }
