@@ -1,8 +1,8 @@
 Package: fieldRS
 Type: Package
 Title: Remote Sensing Field Work Tools
-Version: 0.2.1
-Date: 2018-12-05
+Version: 0.2.2
+Date: 2019-07-29
 Authors@R: person("Ruben", "Remelgado", role = c("aut", "cre"), email="remelgado.ruben@gmail.com")
 URL: https://github.com/RRemelgado/fieldRS/
 BugReports: https://github.com/RRemelgado/fieldRS/issues/
@@ -18,7 +18,7 @@ Suggests: knitr, rmarkdown, kableExtra, imager, randomForest, rgdal,
         RStoolbox
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2018-12-11 22:36:23 UTC; rus14jh
+Packaged: 2019-07-29 15:32:33 UTC; rr70wedu
 Author: Ruben Remelgado [aut, cre]
 Repository: CRAN
-Date/Publication: 2018-12-11 23:20:27 UTC
+Date/Publication: 2019-07-29 18:30:02 UTC
