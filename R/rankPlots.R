@@ -10,7 +10,7 @@
 #' @importFrom raster crop which.max crs
 #' @importFrom sp SpatialPoints
 #' @importFrom rgeos gDistance
-#' @importFrom spatialEco shannons
+#' @importFrom vegan diversity
 #' @details {For each polygon in \emph{y}, the function will determine the distance between its centroid and
 #' the nearest road provided through \emph{z}, count the number of classes in \emph{x} and the number of patches
 #' of connected pixels and report on the proportion of non NA values. The patch count can be restricted to those
@@ -57,7 +57,7 @@
 #' 
 #' # plot output
 #' gp <- fortify(pp, region="ranking")
-#' ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(gp$id))) + 
+#' ggplot(gp, aes(x=long, y=lat, group=group, fill=as.numeric(id))) + 
 #' geom_polygon() + scale_fill_continuous(name="Ranking")
 #' 
 #' }
@@ -118,7 +118,7 @@ rankPlots <- function(x, y, z, min.size=1, priority=c('diversity', 'richness', '
     i <- which.max(!is.na(r))
     a <- cellStats(!is.na(r), sum) # usable area
     uv <- unique(r[i])
-    s <- shannons(as.data.frame(t(sapply(uv, function(u) {cellStats(r==u, sum, na.rm=TRUE)/a}))))$H
+    s <- diversity(as.data.frame(t(sapply(uv, function(u) {cellStats(r==u, sum, na.rm=TRUE)/a}))))
     cr <- length(uv) / nc
     pf <- relative.freq(r[i])
     r <- crop(regions, y[j,])

@@ -1,3 +1,22 @@
+=================================================================================
+
+#### fieldRS 0.2.3
+
+=================================================================================
+
+### Fixes
+* removed spatialEco dependency (package not updated for Proj4 changes)
+* Package vegan now used to estimate shannon diversity in rankPlots.R
+* Package geosphere now used to estimate polygon perimeters in extractFields.R
+
+=================================================================================
+
+#### fieldRS 0.2.2
+
+=================================================================================
+
+### Fixes
+* Updated access to sp objects in accordance with proj6 migration
 
 =================================================================================
 

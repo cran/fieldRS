@@ -3,8 +3,7 @@
 \docType{package}
 \name{fieldRS}
 \alias{fieldRS}
-\alias{fieldRS-package}
 \title{fieldRS.}
 \description{
-fieldRS.
+Example datasets of the fieldRS package
 }
